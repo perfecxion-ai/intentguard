@@ -1,0 +1,89 @@
+{
+  "vertical": "healthcare",
+  "version": "1.0",
+  "display_name": "Healthcare",
+
+  "labeling_rules": {
+    "allow_definition": "Clearly related to healthcare, medicine, wellness, or health services.",
+    "abstain_definition": "Could be healthcare-related depending on context. Ask for clarification.",
+    "deny_definition": "Clearly not related to healthcare even under charitable interpretation."
+  },
+
+  "scope": {
+    "core_topics": [
+      "symptoms", "diagnosis", "treatment", "medications",
+      "preventive care", "nutrition", "mental health", "fitness",
+      "chronic conditions", "surgery", "emergency care",
+      "health insurance", "patient rights", "telemedicine"
+    ],
+    "conditional_allow": [
+      {
+        "topic": "finance",
+        "condition": "only when related to medical billing, health insurance costs, HSA/FSA, or healthcare affordability",
+        "examples_allow": [
+          "How much does an MRI typically cost?",
+          "What does my health insurance deductible mean?",
+          "How do I negotiate a medical bill?"
+        ],
+        "examples_deny": [
+          "How should I diversify my stock portfolio?",
+          "What are current mortgage rates?",
+          "Best savings account interest rates"
+        ],
+        "disambiguation_questions": [
+          "Is your question about medical costs, health insurance, or financial planning?"
+        ]
+      },
+      {
+        "topic": "legal",
+        "condition": "only when related to patient rights, medical malpractice, HIPAA, or healthcare regulations",
+        "examples_allow": [
+          "What are my rights as a patient?",
+          "How does HIPAA protect my medical records?",
+          "What is informed consent?"
+        ],
+        "examples_deny": [
+          "How do I file for divorce?",
+          "What are my rights if I get arrested?",
+          "How does immigration law work?"
+        ],
+        "disambiguation_questions": [
+          "Is your question about healthcare law, patient rights, or a general legal matter?"
+        ]
+      }
+    ],
+    "hard_exclusions": [
+      "sports scores", "entertainment", "cooking recipes",
+      "gaming", "celebrity gossip", "fashion trends",
+      "travel planning", "fiction writing", "car repair",
+      "home improvement"
+    ]
+  },
+
+  "responses": {
+    "deny_message": "I'm designed to help with healthcare topics like symptoms, treatments, medications, preventive care, and health insurance.",
+    "deny_examples": [
+      "What are common symptoms of the flu?",
+      "How does physical therapy work?",
+      "What vaccines do adults need?"
+    ],
+    "abstain_message": "Can you clarify how this relates to healthcare? I want to make sure I give you the most helpful answer.",
+    "abstain_followup_template": "I can help with topics like {core_topics_sample}."
+  },
+
+  "decision": {
+    "tau_allow": 0.80,
+    "tau_deny": 0.90,
+    "margin_allow": 0.10,
+    "margin_deny": 0.10,
+    "context_window": 1
+  },
+
+  "privacy": {
+    "log_query_text_default": false,
+    "pii_redaction_default": true,
+    "log_sampling_rate": 0.1
+  },
+
+  "context_template_version": "ctv1"
+}

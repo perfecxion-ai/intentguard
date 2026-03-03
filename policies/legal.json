@@ -1,0 +1,89 @@
+{
+  "vertical": "legal",
+  "version": "1.0",
+  "display_name": "Legal Services",
+
+  "labeling_rules": {
+    "allow_definition": "Clearly related to law, legal rights, regulations, or legal procedures.",
+    "abstain_definition": "Could be legal depending on context. Ask for clarification.",
+    "deny_definition": "Clearly not related to legal topics even under charitable interpretation."
+  },
+
+  "scope": {
+    "core_topics": [
+      "contracts", "litigation", "employment law", "intellectual property",
+      "criminal law", "family law", "real estate law", "immigration",
+      "corporate law", "compliance", "privacy law", "civil rights",
+      "estate planning", "bankruptcy"
+    ],
+    "conditional_allow": [
+      {
+        "topic": "finance",
+        "condition": "only when related to financial regulations, securities law, tax law, or financial compliance",
+        "examples_allow": [
+          "What are SEC filing requirements?",
+          "How does Dodd-Frank regulation work?",
+          "What is fiduciary duty?"
+        ],
+        "examples_deny": [
+          "How should I invest my savings?",
+          "What are current CD rates?",
+          "Best budgeting strategies"
+        ],
+        "disambiguation_questions": [
+          "Is your question about financial regulations or investment advice?"
+        ]
+      },
+      {
+        "topic": "healthcare",
+        "condition": "only when related to medical malpractice, healthcare regulations, HIPAA law, or patient legal rights",
+        "examples_allow": [
+          "What constitutes medical malpractice?",
+          "What are HIPAA violation penalties?",
+          "Can I sue for a misdiagnosis?"
+        ],
+        "examples_deny": [
+          "What are symptoms of diabetes?",
+          "Which medication should I take?",
+          "How do vaccines work?"
+        ],
+        "disambiguation_questions": [
+          "Is your question about healthcare law or medical advice?"
+        ]
+      }
+    ],
+    "hard_exclusions": [
+      "sports", "entertainment", "cooking",
+      "gaming", "celebrity gossip", "fashion",
+      "travel leisure", "fiction writing",
+      "home improvement", "automotive repair"
+    ]
+  },
+
+  "responses": {
+    "deny_message": "I'm designed to help with legal topics like contracts, regulations, employment law, and legal rights.",
+    "deny_examples": [
+      "What are my rights as a tenant?",
+      "How does the patent process work?",
+      "What should I know about employment contracts?"
+    ],
+    "abstain_message": "Can you clarify how this relates to a legal matter? I want to make sure I give you the most relevant answer.",
+    "abstain_followup_template": "I can help with topics like {core_topics_sample}."
+  },
+
+  "decision": {
+    "tau_allow": 0.80,
+    "tau_deny": 0.90,
+    "margin_allow": 0.10,
+    "margin_deny": 0.10,
+    "context_window": 1
+  },
+
+  "privacy": {
+    "log_query_text_default": false,
+    "pii_redaction_default": true,
+    "log_sampling_rate": 0.1
+  },
+
+  "context_template_version": "ctv1"
+}
