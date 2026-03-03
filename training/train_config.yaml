@@ -1,0 +1,16 @@
+# Training configuration for intent classifier fine-tuning.
+# Adjust per vertical as needed.
+
+base_model: microsoft/deberta-v3-base
+max_length: 256
+batch_size: 32
+learning_rate: 2.0e-5
+epochs: 5
+warmup_ratio: 0.1
+weight_decay: 0.01
+label_smoothing: 0.05
+eval_split: 0.15
+
+# Freeze the word embedding layer to prevent overfitting.
+# The embedding layer is ~98M of the 184M total params.
+freeze_embeddings: true
