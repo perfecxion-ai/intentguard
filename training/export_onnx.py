@@ -18,6 +18,7 @@ from __future__ import annotations
 import argparse
 import json
 import logging
+import os
 import shutil
 from pathlib import Path
 
@@ -71,22 +72,78 @@ def export_to_onnx(model, tokenizer, output_path: Path, max_length: int = 256):
 
 
 def quantize_int8(input_path: Path, output_path: Path):
-    """Apply INT8 dynamic quantization to ONNX model."""
+    """Apply INT8 dynamic quantization using Olive (preferred) or onnxruntime fallback."""
+    original_size = input_path.stat().st_size / (1024 * 1024)
+
+    try:
+        _quantize_with_olive(input_path, output_path)
+    except Exception as e:
+        logger.warning("Olive quantization failed (%s), trying onnxruntime fallback", e)
+        _quantize_with_ort(input_path, output_path)
+
+    if output_path.exists():
+        quantized_size = output_path.stat().st_size / (1024 * 1024)
+        logger.info(
+            "Quantized: %.1fMB -> %.1fMB (%.0f%% reduction)",
+            original_size, quantized_size,
+            (1 - quantized_size / original_size) * 100,
+        )
+
+
+def _quantize_with_olive(input_path: Path, output_path: Path):
+    """Quantize using Microsoft Olive — handles DeBERTa-v3 correctly."""
+    import tempfile
+
+    from olive.workflows import run as olive_run
+
+    with tempfile.TemporaryDirectory() as tmpdir:
+        config = {
+            "input_model": {
+                "type": "OnnxModel",
+                "model_path": str(input_path),
+            },
+            "systems": {
+                "local": {"type": "LocalSystem"},
+            },
+            "evaluators": {},
+            "passes": {
+                "quantization": {
+                    "type": "OnnxDynamicQuantization",
+                    "weight_type": "QInt8",
+                },
+            },
+            "host": "local",
+            "target": "local",
+            "output_dir": tmpdir,
+            "cache_dir": str(Path(tmpdir) / "cache"),
+        }
+
+        olive_run(config)
+
+        # Find the output model
+        for root, _, files in os.walk(tmpdir):
+            for f in files:
+                if f.endswith(".onnx"):
+                    src = Path(root) / f
+                    shutil.copy2(src, output_path)
+                    # Copy external data file if present
+                    data_file = src.with_suffix(".onnx.data")
+                    if data_file.exists():
+                        shutil.copy2(data_file, output_path.with_suffix(".onnx.data"))
+                    logger.info("Olive quantization complete: %s", output_path)
+                    return
+
+    raise RuntimeError("Olive produced no output model")
+
+
+def _quantize_with_ort(input_path: Path, output_path: Path):
+    """Fallback: quantize with onnxruntime (may fail on DeBERTa-v3)."""
     from onnxruntime.quantization import QuantType, quantize_dynamic
 
     quantize_dynamic(
         str(input_path),
         str(output_path),
         weight_type=QuantType.QInt8,
-    )
-
-    original_size = input_path.stat().st_size / (1024 * 1024)
-    quantized_size = output_path.stat().st_size / (1024 * 1024)
-    logger.info(
-        "Quantized: %.1fMB -> %.1fMB (%.0f%% reduction)",
-        original_size,
-        quantized_size,
-        (1 - quantized_size / original_size) * 100,
     )
 
 
