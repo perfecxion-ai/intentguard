@@ -8,7 +8,7 @@ import time
 from contextlib import asynccontextmanager
 
 import httpx
-from fastapi import FastAPI, HTTPException, Request, Response
+from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
 
 from intentguard.classifier import BaseClassifier, StubClassifier
@@ -131,7 +131,10 @@ async def chat_completions(req: ChatCompletionRequest, response: Response):
     # DENY, ABSTAIN, or no downstream — return the classifier's response
     content = result.message if result.decision != Decision.ALLOW else ""
     if result.decision == Decision.ALLOW and not _settings.downstream_url:
-        content = "Request allowed. No downstream LLM configured — set DOWNSTREAM_URL to enable proxy mode."
+        content = (
+            "Request allowed. No downstream LLM configured "
+            "— set DOWNSTREAM_URL to enable proxy mode."
+        )
 
     classification = result if _settings.debug else None
     if classification:
