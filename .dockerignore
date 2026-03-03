@@ -1,0 +1,12 @@
+.git
+.venv
+.pytest_cache
+__pycache__
+*.pyc
+data/
+models/
+training/
+evaluation/
+tests/
+.DS_Store
+*.egg-info
