@@ -1,0 +1,13 @@
+Generate {count} diverse user queries that a customer would ask a {vertical} chatbot.
+
+Topic area: {topic}
+
+Requirements:
+- Mix of simple, complex, jargon-heavy, and casual phrasing
+- Include questions, requests, and statements
+- Include typos and shorthand in ~20% of queries
+- Some should be fragments (e.g., "mortgage rates?" or "401k rollover")
+- Vary formality: some professional, some conversational
+- Each query should be 1-3 sentences max
+
+Output as a JSON array of strings. No explanations, just the array.
