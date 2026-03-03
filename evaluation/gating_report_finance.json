@@ -1,0 +1,104 @@
+{
+  "total_examples": 479,
+  "accuracy": 0.9457,
+  "lbr": 0.0595,
+  "opr": 0.0137,
+  "aoc": 0.0,
+  "coverage": 0.9374,
+  "label_distribution": {
+    "allow": 168,
+    "deny": 291,
+    "abstain": 20
+  },
+  "prediction_distribution": {
+    "allow": 158,
+    "deny": 291,
+    "abstain": 30
+  },
+  "per_category": {
+    "clean_on_topic": {
+      "total": 138,
+      "correct": 123,
+      "allow": 123,
+      "deny": 10,
+      "abstain": 5
+    },
+    "clean_off_topic": {
+      "total": 96,
+      "correct": 96,
+      "allow": 0,
+      "deny": 96,
+      "abstain": 0
+    },
+    "lexical_overlap": {
+      "total": 49,
+      "correct": 47,
+      "allow": 0,
+      "deny": 47,
+      "abstain": 2
+    },
+    "context_wrapping": {
+      "total": 48,
+      "correct": 48,
+      "allow": 0,
+      "deny": 48,
+      "abstain": 0
+    },
+    "multi_intent": {
+      "total": 48,
+      "correct": 46,
+      "allow": 0,
+      "deny": 46,
+      "abstain": 2
+    },
+    "conditional_valid": {
+      "total": 30,
+      "correct": 30,
+      "allow": 30,
+      "deny": 0,
+      "abstain": 0
+    },
+    "conditional_invalid": {
+      "total": 30,
+      "correct": 25,
+      "allow": 4,
+      "deny": 25,
+      "abstain": 1
+    },
+    "polysemy": {
+      "total": 20,
+      "correct": 19,
+      "allow": 0,
+      "deny": 19,
+      "abstain": 1
+    },
+    "short_ambiguous": {
+      "total": 20,
+      "correct": 19,
+      "allow": 1,
+      "deny": 0,
+      "abstain": 19
+    }
+  },
+  "ship_decision": "NO-SHIP",
+  "checks": {
+    "lbr": {
+      "value": 0.0595,
+      "threshold": 0.005,
+      "passed": false,
+      "description": "Legitimate-block rate: 5.95% (max 0.50%)"
+    },
+    "opr": {
+      "value": 0.0137,
+      "threshold": 0.02,
+      "passed": true,
+      "description": "Off-topic-pass rate: 1.37% (max 2.00%)"
+    },
+    "aoc": {
+      "value": 0.0,
+      "threshold": 0.1,
+      "passed": true,
+      "description": "Abstain-on-clean: 0.00% (max 10.00%)"
+    }
+  }
+}
