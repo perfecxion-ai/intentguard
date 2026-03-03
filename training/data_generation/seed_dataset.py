@@ -13,8 +13,8 @@ from __future__ import annotations
 
 import argparse
 import json
-import random
 import logging
+import random
 from pathlib import Path
 
 logger = logging.getLogger(__name__)

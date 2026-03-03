@@ -18,7 +18,6 @@ from __future__ import annotations
 import argparse
 import json
 import logging
-import sys
 import time
 from pathlib import Path
 
@@ -68,7 +67,7 @@ def parse_json_response(text: str) -> list | dict:
     if text.startswith("```"):
         # Strip markdown code fences
         lines = text.split("\n")
-        lines = [l for l in lines if not l.strip().startswith("```")]
+        lines = [line for line in lines if not line.strip().startswith("```")]
         text = "\n".join(lines)
     return json.loads(text)
 

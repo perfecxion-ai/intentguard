@@ -196,7 +196,10 @@ def main():
         base_model,
         num_labels=3,
         problem_type="single_label_classification",
+        low_cpu_mem_usage=True,
     )
+    # DeBERTa-v3 loads with mixed precision on some platforms — force fp32
+    model = model.float()
 
     # Set label names for the model config
     model.config.label2id = LABEL_MAP
@@ -252,6 +255,7 @@ def main():
         logging_steps=50,
         save_total_limit=2,
         fp16=torch.cuda.is_available(),
+        use_cpu=not torch.cuda.is_available(),
         dataloader_num_workers=0,
         report_to="none",
     )

@@ -5,10 +5,10 @@
 # With ONNX INT8, expect p99 < 20ms — well within 50ms budget.
 # DeBERTa-v3-base (86M) had p99 > 100ms on CPU — too slow.
 base_model: microsoft/deberta-v3-xsmall
-max_length: 256
-batch_size: 32
+max_length: 128
+batch_size: 8
 learning_rate: 2.0e-5
-epochs: 5
+epochs: 3
 warmup_ratio: 0.1
 weight_decay: 0.01
 label_smoothing: 0.05
