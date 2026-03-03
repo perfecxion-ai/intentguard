@@ -1,0 +1,106 @@
+{
+  "vertical": "finance",
+  "version": "1.0",
+  "display_name": "Financial Services",
+
+  "labeling_rules": {
+    "allow_definition": "Clearly in-scope for financial services without needing more context.",
+    "abstain_definition": "Could be in-scope depending on intent. Ask for clarification.",
+    "deny_definition": "Clearly out-of-scope even under charitable interpretation."
+  },
+
+  "scope": {
+    "core_topics": [
+      "banking", "lending", "credit", "payments", "investing",
+      "insurance", "tax", "personal finance", "retirement",
+      "mortgages", "financial planning", "budgeting"
+    ],
+    "conditional_allow": [
+      {
+        "topic": "healthcare",
+        "condition": "only when related to financial planning, insurance, HSA/FSA, medical debt, or compliance",
+        "examples_allow": [
+          "What are HSA contribution limits?",
+          "How does medical debt affect my credit score?",
+          "What's the difference between HMO and PPO costs?"
+        ],
+        "examples_deny": [
+          "Explain my MRI results",
+          "What antibiotic should I take?",
+          "Symptoms of diabetes"
+        ],
+        "disambiguation_questions": [
+          "Is your question about healthcare costs, insurance, or financial planning?",
+          "Are you asking about HSA/FSA, billing, or coverage?"
+        ]
+      },
+      {
+        "topic": "legal",
+        "condition": "only when related to financial regulation, contracts, or compliance",
+        "examples_allow": [
+          "What are SEC filing requirements?",
+          "Fiduciary duty in wealth management",
+          "How does Dodd-Frank affect lending?"
+        ],
+        "examples_deny": [
+          "How do I file for divorce?",
+          "What are my rights if I get arrested?",
+          "Immigration visa process"
+        ],
+        "disambiguation_questions": [
+          "Is your question about financial regulation or compliance?"
+        ]
+      },
+      {
+        "topic": "real_estate",
+        "condition": "only when related to mortgages, property investment, REITs, or real estate finance",
+        "examples_allow": [
+          "How do mortgage rates affect housing prices?",
+          "REIT investment strategies",
+          "Should I rent or buy from a financial perspective?"
+        ],
+        "examples_deny": [
+          "Best paint colors for a living room",
+          "How to fix a leaky faucet",
+          "Interior design trends"
+        ],
+        "disambiguation_questions": [
+          "Are you asking about the financial aspects of real estate?"
+        ]
+      }
+    ],
+    "hard_exclusions": [
+      "sports", "entertainment", "cooking", "gaming",
+      "celebrity gossip", "fashion", "travel_leisure",
+      "fiction_writing", "relationship_advice"
+    ]
+  },
+
+  "responses": {
+    "deny_message": "I'm designed to help with financial topics like banking, investing, insurance, and tax planning.",
+    "deny_examples": [
+      "What are current mortgage rates?",
+      "How should I diversify my portfolio?",
+      "Explain compound interest",
+      "What's the difference between a Roth and traditional IRA?"
+    ],
+    "abstain_message": "Can you clarify how this relates to financial services? I want to make sure I give you the most relevant answer.",
+    "abstain_followup_template": "I can help with topics like {core_topics_sample}."
+  },
+
+  "decision": {
+    "tau_allow": 0.80,
+    "tau_deny": 0.90,
+    "margin_allow": 0.10,
+    "margin_deny": 0.10,
+    "context_window": 1
+  },
+
+  "privacy": {
+    "log_query_text_default": false,
+    "pii_redaction_default": true,
+    "log_sampling_rate": 0.1
+  },
+
+  "context_template_version": "ctv1"
+}
