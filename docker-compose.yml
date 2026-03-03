@@ -1,0 +1,12 @@
+services:
+  intentguard:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - POLICY_PATH=policies/finance.json
+      - DEBUG=true
+      - LOG_QUERY_TEXT=true
+    volumes:
+      - ./policies:/app/policies:ro
+      - ./models:/app/models:ro
