@@ -2,15 +2,21 @@
 
 from __future__ import annotations
 
+import json
 import logging
 import random
 from abc import ABC, abstractmethod
+from pathlib import Path
+
+import numpy as np
 
 from intentguard.normalize import has_encoding_tricks, normalize
 from intentguard.policy import Policy
 from intentguard.schema import ClassifyResponse, Decision
 
 logger = logging.getLogger(__name__)
+
+LABEL_NAMES = ["allow", "deny", "abstain"]
 
 
 class BaseClassifier(ABC):
@@ -93,11 +99,90 @@ class BaseClassifier(ABC):
         return Decision.ABSTAIN, max(p_abstain, 1.0 - p_allow - p_deny)
 
 
+class ONNXClassifier(BaseClassifier):
+    """Production classifier using ONNX Runtime."""
+
+    def __init__(
+        self,
+        policy: Policy,
+        model_path: Path,
+        tokenizer_path: Path,
+        calibration_path: Path | None = None,
+        max_length: int = 256,
+        intra_op_threads: int = 4,
+        inter_op_threads: int = 1,
+    ):
+        super().__init__(policy)
+        import onnxruntime as ort
+
+        # Load ONNX model
+        sess_options = ort.SessionOptions()
+        sess_options.intra_op_num_threads = intra_op_threads
+        sess_options.inter_op_num_threads = inter_op_threads
+        sess_options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
+
+        self.session = ort.InferenceSession(
+            str(model_path),
+            sess_options,
+            providers=["CPUExecutionProvider"],
+        )
+        self.input_names = {inp.name for inp in self.session.get_inputs()}
+        logger.info("ONNX model loaded: %s", model_path)
+
+        # Load tokenizer (HuggingFace format)
+        from transformers import AutoTokenizer
+        self.tokenizer = AutoTokenizer.from_pretrained(str(tokenizer_path))
+        self.max_length = max_length
+
+        # Load calibration
+        self.temperature = 1.0
+        if calibration_path and calibration_path.exists():
+            params = json.loads(calibration_path.read_text())
+            self.temperature = params.get("temperature", 1.0)
+            logger.info("Calibration loaded: temperature=%.4f", self.temperature)
+
+        self._vertical_context = policy.vertical_context()
+
+        # Warm up: run one inference to trigger JIT compilation
+        self._warmup()
+
+    def _warmup(self):
+        """Run a dummy inference to warm up ONNX Runtime."""
+        logger.info("Warming up ONNX model...")
+        self.predict("warmup query")
+        logger.info("Warmup complete")
+
+    def predict(self, text: str) -> tuple[dict[str, float], bool]:
+        encoded = self.tokenizer(
+            text,
+            self._vertical_context,
+            truncation=True,
+            max_length=self.max_length,
+            padding="max_length",
+            return_tensors="np",
+        )
+
+        # DeBERTa-v3 does not use token_type_ids
+        feed = {k: v for k, v in encoded.items() if k in self.input_names}
+
+        logits = self.session.run(None, feed)[0]
+
+        # Apply temperature scaling
+        scaled = logits / self.temperature
+
+        # Softmax
+        exp_scores = np.exp(scaled - np.max(scaled, axis=1, keepdims=True))
+        probs_arr = exp_scores / exp_scores.sum(axis=1, keepdims=True)
+        probs_arr = probs_arr[0]  # batch size 1
+
+        probs = {name: float(probs_arr[i]) for i, name in enumerate(LABEL_NAMES)}
+        return probs, True
+
+
 class StubClassifier(BaseClassifier):
     """Returns random decisions for testing. No model required."""
 
     def predict(self, text: str) -> tuple[dict[str, float], bool]:
-        # Generate random probabilities that sum to 1
         raw = [random.random() for _ in range(3)]
         total = sum(raw)
         probs = {

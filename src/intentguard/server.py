@@ -11,7 +11,7 @@ import httpx
 from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
 
-from intentguard.classifier import BaseClassifier, StubClassifier
+from intentguard.classifier import BaseClassifier, ONNXClassifier, StubClassifier
 from intentguard.config import Settings, load_settings
 from intentguard.policy import Policy
 from intentguard.schema import (
@@ -37,11 +37,18 @@ _settings: Settings | None = None
 
 def _load_classifier(settings: Settings, policy: Policy) -> BaseClassifier:
     """Load the appropriate classifier based on available model files."""
-    if settings.model_path.exists():
-        # ONNX model available — will be implemented when model is trained
-        logger.info("ONNX model found at %s (not yet implemented, using stub)", settings.model_path)
+    if settings.model_path.exists() and settings.tokenizer_path.exists():
+        logger.info("Loading ONNX model from %s", settings.model_path)
+        return ONNXClassifier(
+            policy=policy,
+            model_path=settings.model_path,
+            tokenizer_path=settings.tokenizer_path,
+            calibration_path=settings.calibration_path,
+            intra_op_threads=settings.intra_op_threads,
+            inter_op_threads=settings.inter_op_threads,
+        )
 
-    logger.info("Using stub classifier (no model loaded)")
+    logger.info("No model files found, using stub classifier")
     return StubClassifier(policy)
 
 

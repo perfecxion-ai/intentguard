@@ -98,8 +98,8 @@ class BenchmarkResult:
 
 def benchmark_transformers(model_id: str, model_name: str, rounds: int) -> list[BenchmarkResult]:
     """Benchmark a model using HuggingFace transformers (PyTorch, CPU)."""
-    from transformers import AutoModelForSequenceClassification, AutoTokenizer
     import torch
+    from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
     print(f"\n  Loading {model_name} ({model_id})...")
     tokenizer = AutoTokenizer.from_pretrained(model_id)
@@ -145,8 +145,8 @@ def benchmark_transformers(model_id: str, model_name: str, rounds: int) -> list[
 def benchmark_onnx(model_id: str, model_name: str, rounds: int) -> list[BenchmarkResult]:
     """Benchmark a model exported to ONNX (CPU)."""
     import onnxruntime as ort
-    from transformers import AutoTokenizer
     from optimum.onnxruntime import ORTModelForSequenceClassification
+    from transformers import AutoTokenizer
 
     print(f"\n  Loading {model_name} ONNX ({model_id})...")
 
