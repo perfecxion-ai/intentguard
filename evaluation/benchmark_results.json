@@ -1,0 +1,74 @@
+[
+  {
+    "model": "deberta-v3-base",
+    "input": "short",
+    "tokens": 5,
+    "rounds": 50,
+    "mean_ms": 82.72,
+    "median_ms": 79.17,
+    "p95_ms": 101.71,
+    "p99_ms": 117.04,
+    "min_ms": 67.96,
+    "max_ms": 131.02
+  },
+  {
+    "model": "deberta-v3-base",
+    "input": "medium",
+    "tokens": 31,
+    "rounds": 50,
+    "mean_ms": 111.73,
+    "median_ms": 105.84,
+    "p95_ms": 136.15,
+    "p99_ms": 177.16,
+    "min_ms": 93.11,
+    "max_ms": 210.69
+  },
+  {
+    "model": "deberta-v3-base",
+    "input": "long",
+    "tokens": 91,
+    "rounds": 50,
+    "mean_ms": 177.95,
+    "median_ms": 168.75,
+    "p95_ms": 208.0,
+    "p99_ms": 288.66,
+    "min_ms": 154.99,
+    "max_ms": 363.21
+  },
+  {
+    "model": "deberta-v3-xsmall",
+    "input": "short",
+    "tokens": 5,
+    "rounds": 50,
+    "mean_ms": 28.06,
+    "median_ms": 27.73,
+    "p95_ms": 31.12,
+    "p99_ms": 34.03,
+    "min_ms": 25.45,
+    "max_ms": 34.59
+  },
+  {
+    "model": "deberta-v3-xsmall",
+    "input": "medium",
+    "tokens": 31,
+    "rounds": 50,
+    "mean_ms": 35.77,
+    "median_ms": 35.61,
+    "p95_ms": 40.17,
+    "p99_ms": 41.24,
+    "min_ms": 32.37,
+    "max_ms": 41.71
+  },
+  {
+    "model": "deberta-v3-xsmall",
+    "input": "long",
+    "tokens": 91,
+    "rounds": 50,
+    "mean_ms": 65.74,
+    "median_ms": 63.73,
+    "p95_ms": 79.4,
+    "p99_ms": 86.65,
+    "min_ms": 59.84,
+    "max_ms": 90.66
+  }
+]
