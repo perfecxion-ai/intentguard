@@ -310,20 +310,11 @@ def main():
                 raise FileNotFoundError("INT8 output not produced")
         except Exception as e:
             logger.warning("INT8 quantization failed: %s. Shipping FP32.", e)
-            # Copy FP32 data file too if it exists
-            fp32_data = fp32_path.with_suffix(".onnx.data")
-            shutil.copy2(fp32_path, output_dir / "model.onnx")
-            if fp32_data.exists():
-                shutil.copy2(fp32_data, output_dir / "model.onnx.data")
-            fp32_path.unlink(missing_ok=True)
-            fp32_data.unlink(missing_ok=True)
+            # Rename FP32 to model.onnx — keep the data file name as-is since
+            # the ONNX model references it internally by original name
+            fp32_path.rename(output_dir / "model.onnx")
     else:
-        shutil.copy2(fp32_path, output_dir / "model.onnx")
-        fp32_data = fp32_path.with_suffix(".onnx.data")
-        if fp32_data.exists():
-            shutil.copy2(fp32_data, output_dir / "model.onnx.data")
-        fp32_path.unlink(missing_ok=True)
-        fp32_data.unlink(missing_ok=True)
+        fp32_path.rename(output_dir / "model.onnx")
 
     # Copy tokenizer
     tokenizer.save_pretrained(str(output_dir / "tokenizer"))

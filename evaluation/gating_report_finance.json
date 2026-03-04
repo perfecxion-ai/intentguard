@@ -1,27 +1,27 @@
 {
   "total_examples": 479,
-  "accuracy": 0.9457,
-  "lbr": 0.0595,
-  "opr": 0.0137,
+  "accuracy": 0.9207,
+  "lbr": 0.0238,
+  "opr": 0.0481,
   "aoc": 0.0,
-  "coverage": 0.9374,
+  "coverage": 0.9207,
   "label_distribution": {
     "allow": 168,
     "deny": 291,
     "abstain": 20
   },
   "prediction_distribution": {
-    "allow": 158,
-    "deny": 291,
-    "abstain": 30
+    "allow": 176,
+    "abstain": 38,
+    "deny": 265
   },
   "per_category": {
     "clean_on_topic": {
       "total": 138,
-      "correct": 123,
-      "allow": 123,
-      "deny": 10,
-      "abstain": 5
+      "correct": 131,
+      "allow": 131,
+      "deny": 4,
+      "abstain": 3
     },
     "clean_off_topic": {
       "total": 96,
@@ -39,17 +39,17 @@
     },
     "context_wrapping": {
       "total": 48,
-      "correct": 48,
-      "allow": 0,
-      "deny": 48,
-      "abstain": 0
+      "correct": 43,
+      "allow": 1,
+      "deny": 43,
+      "abstain": 4
     },
     "multi_intent": {
       "total": 48,
-      "correct": 46,
-      "allow": 0,
-      "deny": 46,
-      "abstain": 2
+      "correct": 32,
+      "allow": 10,
+      "deny": 32,
+      "abstain": 6
     },
     "conditional_valid": {
       "total": 30,
@@ -60,10 +60,10 @@
     },
     "conditional_invalid": {
       "total": 30,
-      "correct": 25,
-      "allow": 4,
-      "deny": 25,
-      "abstain": 1
+      "correct": 24,
+      "allow": 3,
+      "deny": 24,
+      "abstain": 3
     },
     "polysemy": {
       "total": 20,
@@ -83,16 +83,16 @@
   "ship_decision": "NO-SHIP",
   "checks": {
     "lbr": {
-      "value": 0.0595,
+      "value": 0.0238,
       "threshold": 0.005,
       "passed": false,
-      "description": "Legitimate-block rate: 5.95% (max 0.50%)"
+      "description": "Legitimate-block rate: 2.38% (max 0.50%)"
     },
     "opr": {
-      "value": 0.0137,
+      "value": 0.0481,
       "threshold": 0.02,
-      "passed": true,
-      "description": "Off-topic-pass rate: 1.37% (max 2.00%)"
+      "passed": false,
+      "description": "Off-topic-pass rate: 4.81% (max 2.00%)"
     },
     "aoc": {
       "value": 0.0,
