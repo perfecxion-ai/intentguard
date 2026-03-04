@@ -198,15 +198,19 @@ def main():
 
     # Load model and tokenizer
     logger.info("Loading model from %s", model_dir)
-    tokenizer = AutoTokenizer.from_pretrained(str(model_dir))
     model = AutoModelForSequenceClassification.from_pretrained(str(model_dir))
 
-    # Load training metadata for vertical context
+    # Load training metadata for vertical context and base model name
     metadata_path = model_dir.parent / "training_metadata.json"
     vertical_context = ""
+    base_model = "microsoft/deberta-v3-xsmall"
     if metadata_path.exists():
         metadata = json.loads(metadata_path.read_text())
         vertical_context = metadata.get("vertical_context", "")
+        base_model = metadata.get("base_model", base_model)
+
+    # Load tokenizer from base model to avoid config incompatibilities
+    tokenizer = AutoTokenizer.from_pretrained(base_model)
     logger.info("Vertical context: %s", vertical_context[:80])
 
     # Load calibration data
