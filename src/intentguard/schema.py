@@ -102,6 +102,19 @@ class ModelList(BaseModel):
     data: list[ModelInfo]
 
 
+class FeedbackRequest(BaseModel):
+    """Request body for /v1/feedback."""
+
+    query: str
+    expected_decision: Decision
+    actual_decision: Decision
+    notes: str = ""
+
+
+class FeedbackResponse(BaseModel):
+    status: str = "recorded"
+
+
 class HealthResponse(BaseModel):
     status: str
     model_loaded: bool

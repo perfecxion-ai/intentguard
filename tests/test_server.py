@@ -76,6 +76,71 @@ class TestClassifyEndpoint:
         assert resp.status_code == 200
 
 
+class TestShadowMode:
+    def test_shadow_returns_allow(self, client):
+        resp = client.post("/v1/classify?mode=shadow", json={
+            "messages": [{"role": "user", "content": "What are mortgage rates?"}]
+        })
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["decision"] == "allow"
+
+    def test_shadow_header_has_real_decision(self, client):
+        resp = client.post("/v1/classify?mode=shadow", json={
+            "messages": [{"role": "user", "content": "What are mortgage rates?"}]
+        })
+        assert "x-classification-shadow" in resp.headers
+        assert resp.headers["x-classification-shadow"] in ["allow", "deny", "abstain"]
+
+    def test_enforce_mode_default(self, client):
+        resp = client.post("/v1/classify", json={
+            "messages": [{"role": "user", "content": "Hello"}]
+        })
+        assert resp.status_code == 200
+        assert "x-classification-shadow" not in resp.headers
+
+
+class TestFeedbackEndpoint:
+    def test_submit_feedback(self, client):
+        resp = client.post("/v1/feedback", json={
+            "query": "What are mortgage rates?",
+            "expected_decision": "allow",
+            "actual_decision": "deny",
+        })
+        assert resp.status_code == 200
+        assert resp.json()["status"] == "recorded"
+
+    def test_feedback_with_notes(self, client):
+        resp = client.post("/v1/feedback", json={
+            "query": "HSA contribution limits",
+            "expected_decision": "allow",
+            "actual_decision": "abstain",
+            "notes": "This is clearly a financial question",
+        })
+        assert resp.status_code == 200
+
+    def test_feedback_invalid_decision(self, client):
+        resp = client.post("/v1/feedback", json={
+            "query": "test",
+            "expected_decision": "invalid",
+            "actual_decision": "allow",
+        })
+        assert resp.status_code == 422
+
+
+class TestMetricsEndpoint:
+    def test_metrics_returns_200(self, client):
+        resp = client.get("/metrics")
+        assert resp.status_code == 200
+
+    def test_metrics_after_classify(self, client):
+        client.post("/v1/classify", json={
+            "messages": [{"role": "user", "content": "test"}]
+        })
+        resp = client.get("/metrics")
+        assert resp.status_code == 200
+
+
 class TestChatCompletionsEndpoint:
     def test_basic_completion(self, client):
         resp = client.post("/v1/chat/completions", json={
