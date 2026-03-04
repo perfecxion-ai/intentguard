@@ -1,98 +1,98 @@
 {
   "total_examples": 470,
-  "accuracy": 0.8809,
-  "lbr": 0.012,
-  "opr": 0.0247,
+  "accuracy": 0.934,
+  "lbr": 0.0327,
+  "opr": 0.035,
   "aoc": 0.0,
-  "coverage": 0.8617,
+  "coverage": 0.9298,
   "label_distribution": {
-    "allow": 167,
-    "deny": 283,
-    "abstain": 20
+    "allow": 245,
+    "deny": 200,
+    "abstain": 25
   },
   "prediction_distribution": {
-    "allow": 161,
-    "abstain": 65,
-    "deny": 244
+    "allow": 236,
+    "abstain": 33,
+    "deny": 201
   },
   "per_category": {
     "clean_on_topic": {
       "total": 137,
-      "correct": 127,
-      "allow": 127,
-      "deny": 2,
-      "abstain": 8
+      "correct": 130,
+      "allow": 130,
+      "deny": 3,
+      "abstain": 4
     },
     "clean_off_topic": {
       "total": 89,
-      "correct": 86,
+      "correct": 89,
       "allow": 0,
-      "deny": 86,
-      "abstain": 3
+      "deny": 89,
+      "abstain": 0
     },
     "lexical_overlap": {
       "total": 50,
-      "correct": 38,
+      "correct": 50,
       "allow": 0,
-      "deny": 38,
-      "abstain": 12
+      "deny": 50,
+      "abstain": 0
     },
     "context_wrapping": {
       "total": 48,
-      "correct": 36,
-      "allow": 4,
-      "deny": 36,
-      "abstain": 8
+      "correct": 31,
+      "allow": 33,
+      "deny": 12,
+      "abstain": 3
     },
     "multi_intent": {
       "total": 46,
-      "correct": 44,
-      "allow": 0,
-      "deny": 44,
-      "abstain": 2
-    },
-    "conditional_valid": {
-      "total": 30,
-      "correct": 26,
-      "allow": 26,
+      "correct": 42,
+      "allow": 42,
       "deny": 0,
       "abstain": 4
     },
+    "conditional_valid": {
+      "total": 30,
+      "correct": 30,
+      "allow": 30,
+      "deny": 0,
+      "abstain": 0
+    },
     "conditional_invalid": {
       "total": 30,
-      "correct": 21,
-      "allow": 2,
-      "deny": 21,
-      "abstain": 7
+      "correct": 27,
+      "allow": 1,
+      "deny": 27,
+      "abstain": 2
     },
     "polysemy": {
       "total": 20,
-      "correct": 17,
-      "allow": 1,
-      "deny": 17,
-      "abstain": 2
+      "correct": 20,
+      "allow": 0,
+      "deny": 20,
+      "abstain": 0
     },
     "short_ambiguous": {
       "total": 20,
-      "correct": 19,
-      "allow": 1,
+      "correct": 20,
+      "allow": 0,
       "deny": 0,
-      "abstain": 19
+      "abstain": 20
     }
   },
   "ship_decision": "NO-SHIP",
   "checks": {
     "lbr": {
-      "value": 0.012,
+      "value": 0.0327,
       "threshold": 0.005,
       "passed": false,
-      "description": "Legitimate-block rate: 1.20% (max 0.50%)"
+      "description": "Legitimate-block rate: 3.27% (max 0.50%)"
     },
     "opr": {
-      "value": 0.0247,
+      "value": 0.035,
       "threshold": 0.02,
       "passed": false,
-      "description": "Off-topic-pass rate: 2.47% (max 2.00%)"
+      "description": "Off-topic-pass rate: 3.50% (max 2.00%)"
     },
     "aoc": {
       "value": 0.0,

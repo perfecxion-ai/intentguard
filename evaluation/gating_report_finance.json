@@ -1,27 +1,27 @@
 {
   "total_examples": 479,
-  "accuracy": 0.9207,
-  "lbr": 0.0238,
-  "opr": 0.0481,
+  "accuracy": 0.9395,
+  "lbr": 0.0075,
+  "opr": 0.0312,
   "aoc": 0.0,
-  "coverage": 0.9207,
+  "coverage": 0.9186,
   "label_distribution": {
-    "allow": 168,
-    "deny": 291,
+    "allow": 267,
+    "deny": 192,
     "abstain": 20
   },
   "prediction_distribution": {
-    "allow": 176,
-    "abstain": 38,
-    "deny": 265
+    "allow": 263,
+    "abstain": 39,
+    "deny": 177
   },
   "per_category": {
     "clean_on_topic": {
       "total": 138,
-      "correct": 131,
-      "allow": 131,
-      "deny": 4,
-      "abstain": 3
+      "correct": 136,
+      "allow": 136,
+      "deny": 0,
+      "abstain": 2
     },
     "clean_off_topic": {
       "total": 96,
@@ -32,24 +32,24 @@
     },
     "lexical_overlap": {
       "total": 49,
-      "correct": 47,
+      "correct": 45,
       "allow": 0,
-      "deny": 47,
-      "abstain": 2
+      "deny": 45,
+      "abstain": 4
     },
     "context_wrapping": {
       "total": 48,
-      "correct": 43,
-      "allow": 1,
-      "deny": 43,
-      "abstain": 4
+      "correct": 48,
+      "allow": 48,
+      "deny": 0,
+      "abstain": 0
     },
     "multi_intent": {
       "total": 48,
-      "correct": 32,
-      "allow": 10,
-      "deny": 32,
-      "abstain": 6
+      "correct": 39,
+      "allow": 39,
+      "deny": 2,
+      "abstain": 7
     },
     "conditional_valid": {
       "total": 30,
@@ -60,17 +60,17 @@
     },
     "conditional_invalid": {
       "total": 30,
-      "correct": 24,
-      "allow": 3,
-      "deny": 24,
-      "abstain": 3
+      "correct": 20,
+      "allow": 9,
+      "deny": 17,
+      "abstain": 4
     },
     "polysemy": {
       "total": 20,
-      "correct": 19,
+      "correct": 17,
       "allow": 0,
-      "deny": 19,
-      "abstain": 1
+      "deny": 17,
+      "abstain": 3
     },
     "short_ambiguous": {
       "total": 20,
@@ -83,16 +83,16 @@
   "ship_decision": "NO-SHIP",
   "checks": {
     "lbr": {
-      "value": 0.0238,
+      "value": 0.0075,
       "threshold": 0.005,
       "passed": false,
-      "description": "Legitimate-block rate: 2.38% (max 0.50%)"
+      "description": "Legitimate-block rate: 0.75% (max 0.50%)"
     },
     "opr": {
-      "value": 0.0481,
+      "value": 0.0312,
       "threshold": 0.02,
       "passed": false,
-      "description": "Off-topic-pass rate: 4.81% (max 2.00%)"
+      "description": "Off-topic-pass rate: 3.12% (max 2.00%)"
     },
     "aoc": {
       "value": 0.0,
