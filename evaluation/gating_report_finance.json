@@ -1,27 +1,27 @@
 {
   "total_examples": 479,
-  "accuracy": 0.9395,
-  "lbr": 0.0075,
-  "opr": 0.0312,
+  "accuracy": 0.9833,
+  "lbr": 0.0037,
+  "opr": 0.0,
   "aoc": 0.0,
-  "coverage": 0.9186,
+  "coverage": 0.9436,
   "label_distribution": {
     "allow": 267,
     "deny": 192,
     "abstain": 20
   },
   "prediction_distribution": {
-    "allow": 263,
-    "abstain": 39,
-    "deny": 177
+    "allow": 259,
+    "abstain": 27,
+    "deny": 193
   },
   "per_category": {
     "clean_on_topic": {
       "total": 138,
-      "correct": 136,
-      "allow": 136,
+      "correct": 137,
+      "allow": 137,
       "deny": 0,
-      "abstain": 2
+      "abstain": 1
     },
     "clean_off_topic": {
       "total": 96,
@@ -32,24 +32,24 @@
     },
     "lexical_overlap": {
       "total": 49,
-      "correct": 45,
+      "correct": 49,
       "allow": 0,
-      "deny": 45,
-      "abstain": 4
+      "deny": 49,
+      "abstain": 0
     },
     "context_wrapping": {
+      "total": 48,
+      "correct": 43,
+      "allow": 43,
+      "deny": 0,
+      "abstain": 5
+    },
+    "multi_intent": {
       "total": 48,
       "correct": 48,
       "allow": 48,
       "deny": 0,
       "abstain": 0
-    },
-    "multi_intent": {
-      "total": 48,
-      "correct": 39,
-      "allow": 39,
-      "deny": 2,
-      "abstain": 7
     },
     "conditional_valid": {
       "total": 30,
@@ -60,39 +60,39 @@
     },
     "conditional_invalid": {
       "total": 30,
-      "correct": 20,
-      "allow": 9,
-      "deny": 17,
-      "abstain": 4
+      "correct": 28,
+      "allow": 1,
+      "deny": 28,
+      "abstain": 1
     },
     "polysemy": {
       "total": 20,
-      "correct": 17,
+      "correct": 20,
       "allow": 0,
-      "deny": 17,
-      "abstain": 3
+      "deny": 20,
+      "abstain": 0
     },
     "short_ambiguous": {
       "total": 20,
-      "correct": 19,
-      "allow": 1,
+      "correct": 20,
+      "allow": 0,
       "deny": 0,
-      "abstain": 19
+      "abstain": 20
     }
   },
-  "ship_decision": "NO-SHIP",
+  "ship_decision": "SHIP",
   "checks": {
     "lbr": {
-      "value": 0.0075,
+      "value": 0.0037,
       "threshold": 0.005,
-      "passed": false,
-      "description": "Legitimate-block rate: 0.75% (max 0.50%)"
+      "passed": true,
+      "description": "Legitimate-block rate: 0.37% (max 0.50%)"
     },
     "opr": {
-      "value": 0.0312,
+      "value": 0.0,
       "threshold": 0.02,
-      "passed": false,
-      "description": "Off-topic-pass rate: 3.12% (max 2.00%)"
+      "passed": true,
+      "description": "Off-topic-pass rate: 0.00% (max 2.00%)"
     },
     "aoc": {
       "value": 0.0,
