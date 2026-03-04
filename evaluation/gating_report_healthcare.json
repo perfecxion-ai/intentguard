@@ -1,34 +1,34 @@
 {
   "total_examples": 479,
-  "accuracy": 0.977,
+  "accuracy": 0.9896,
   "lbr": 0.0,
-  "opr": 0.0,
+  "opr": 0.0098,
   "aoc": 0.0,
-  "coverage": 0.9353,
+  "coverage": 0.9562,
   "label_distribution": {
     "allow": 253,
     "deny": 204,
     "abstain": 22
   },
   "prediction_distribution": {
-    "allow": 246,
-    "abstain": 31,
-    "deny": 202
+    "allow": 255,
+    "deny": 203,
+    "abstain": 21
   },
   "per_category": {
     "clean_on_topic": {
       "total": 140,
-      "correct": 138,
-      "allow": 138,
+      "correct": 140,
+      "allow": 140,
       "deny": 0,
-      "abstain": 2
+      "abstain": 0
     },
     "clean_off_topic": {
       "total": 95,
       "correct": 94,
-      "allow": 0,
+      "allow": 1,
       "deny": 94,
-      "abstain": 1
+      "abstain": 0
     },
     "lexical_overlap": {
       "total": 49,
@@ -39,10 +39,10 @@
     },
     "context_wrapping": {
       "total": 48,
-      "correct": 40,
-      "allow": 31,
-      "deny": 9,
-      "abstain": 8
+      "correct": 44,
+      "allow": 37,
+      "deny": 10,
+      "abstain": 1
     },
     "multi_intent": {
       "total": 47,
@@ -89,10 +89,10 @@
       "description": "Legitimate-block rate: 0.00% (max 0.50%)"
     },
     "opr": {
-      "value": 0.0,
+      "value": 0.0098,
       "threshold": 0.02,
       "passed": true,
-      "description": "Off-topic-pass rate: 0.00% (max 2.00%)"
+      "description": "Off-topic-pass rate: 0.98% (max 2.00%)"
     },
     "aoc": {
       "value": 0.0,

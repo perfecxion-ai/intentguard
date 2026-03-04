@@ -1,19 +1,19 @@
 {
   "total_examples": 479,
-  "accuracy": 0.9833,
-  "lbr": 0.0037,
+  "accuracy": 0.9958,
+  "lbr": 0.0,
   "opr": 0.0,
   "aoc": 0.0,
-  "coverage": 0.9436,
+  "coverage": 0.9541,
   "label_distribution": {
     "allow": 267,
     "deny": 192,
     "abstain": 20
   },
   "prediction_distribution": {
-    "allow": 259,
-    "abstain": 27,
-    "deny": 193
+    "allow": 265,
+    "abstain": 22,
+    "deny": 192
   },
   "per_category": {
     "clean_on_topic": {
@@ -39,10 +39,10 @@
     },
     "context_wrapping": {
       "total": 48,
-      "correct": 43,
-      "allow": 43,
+      "correct": 47,
+      "allow": 47,
       "deny": 0,
-      "abstain": 5
+      "abstain": 1
     },
     "multi_intent": {
       "total": 48,
@@ -60,10 +60,10 @@
     },
     "conditional_invalid": {
       "total": 30,
-      "correct": 28,
-      "allow": 1,
-      "deny": 28,
-      "abstain": 1
+      "correct": 30,
+      "allow": 3,
+      "deny": 27,
+      "abstain": 0
     },
     "polysemy": {
       "total": 20,
@@ -83,10 +83,10 @@
   "ship_decision": "SHIP",
   "checks": {
     "lbr": {
-      "value": 0.0037,
+      "value": 0.0,
       "threshold": 0.005,
       "passed": true,
-      "description": "Legitimate-block rate: 0.37% (max 0.50%)"
+      "description": "Legitimate-block rate: 0.00% (max 0.50%)"
     },
     "opr": {
       "value": 0.0,

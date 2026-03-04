@@ -1,27 +1,27 @@
 {
   "total_examples": 470,
-  "accuracy": 0.9532,
-  "lbr": 0.0041,
+  "accuracy": 0.9787,
+  "lbr": 0.0,
   "opr": 0.005,
   "aoc": 0.0,
-  "coverage": 0.9128,
+  "coverage": 0.9362,
   "label_distribution": {
     "allow": 245,
     "deny": 200,
     "abstain": 25
   },
   "prediction_distribution": {
-    "allow": 231,
-    "abstain": 41,
-    "deny": 198
+    "allow": 248,
+    "deny": 192,
+    "abstain": 30
   },
   "per_category": {
     "clean_on_topic": {
       "total": 137,
-      "correct": 134,
-      "allow": 134,
+      "correct": 137,
+      "allow": 137,
       "deny": 0,
-      "abstain": 3
+      "abstain": 0
     },
     "clean_off_topic": {
       "total": 89,
@@ -32,17 +32,17 @@
     },
     "lexical_overlap": {
       "total": 50,
-      "correct": 50,
+      "correct": 49,
       "allow": 0,
-      "deny": 50,
-      "abstain": 0
+      "deny": 49,
+      "abstain": 1
     },
     "context_wrapping": {
       "total": 48,
-      "correct": 31,
-      "allow": 21,
-      "deny": 8,
-      "abstain": 19
+      "correct": 41,
+      "allow": 34,
+      "deny": 5,
+      "abstain": 9
     },
     "multi_intent": {
       "total": 46,
@@ -53,17 +53,17 @@
     },
     "conditional_valid": {
       "total": 30,
-      "correct": 29,
-      "allow": 29,
-      "deny": 1,
+      "correct": 30,
+      "allow": 30,
+      "deny": 0,
       "abstain": 0
     },
     "conditional_invalid": {
       "total": 30,
-      "correct": 30,
+      "correct": 29,
       "allow": 0,
-      "deny": 30,
-      "abstain": 0
+      "deny": 29,
+      "abstain": 1
     },
     "polysemy": {
       "total": 20,
@@ -83,10 +83,10 @@
   "ship_decision": "SHIP",
   "checks": {
     "lbr": {
-      "value": 0.0041,
+      "value": 0.0,
       "threshold": 0.005,
       "passed": true,
-      "description": "Legitimate-block rate: 0.41% (max 0.50%)"
+      "description": "Legitimate-block rate: 0.00% (max 0.50%)"
     },
     "opr": {
       "value": 0.005,

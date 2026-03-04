@@ -255,17 +255,20 @@ def main():
     output_dir = Path(args.output)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Load model
+    # Load model and metadata
     logger.info("Loading model from %s", model_dir)
-    tokenizer = AutoTokenizer.from_pretrained(str(model_dir))
     model = AutoModelForSequenceClassification.from_pretrained(str(model_dir))
 
-    # Load vertical context
     metadata_path = model_dir.parent / "training_metadata.json"
     vertical_context = ""
+    base_model = "microsoft/deberta-v3-xsmall"
     if metadata_path.exists():
         metadata = json.loads(metadata_path.read_text())
         vertical_context = metadata.get("vertical_context", "")
+        base_model = metadata.get("base_model", base_model)
+
+    # Load tokenizer from base model (avoids config incompatibilities)
+    tokenizer = AutoTokenizer.from_pretrained(base_model)
 
     # Export ONNX (FP32)
     fp32_path = output_dir / "model_fp32.onnx"

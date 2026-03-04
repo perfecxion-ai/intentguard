@@ -129,7 +129,6 @@ class ONNXClassifier(BaseClassifier):
         self.input_names = {inp.name for inp in self.session.get_inputs()}
         logger.info("ONNX model loaded: %s", model_path)
 
-        # Load tokenizer (HuggingFace format)
         from transformers import AutoTokenizer
         self.tokenizer = AutoTokenizer.from_pretrained(str(tokenizer_path))
         self.max_length = max_length
