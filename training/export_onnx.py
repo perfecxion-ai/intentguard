@@ -293,20 +293,37 @@ def main():
     if not args.skip_quantize:
         int8_path = output_dir / "model.onnx"
         logger.info("Quantizing to INT8...")
-        quantize_int8(fp32_path, int8_path)
-
-        # Sanity check INT8
-        logger.info("Running sanity check on INT8 model...")
-        if not sanity_check(model, tokenizer, int8_path, sanity_examples, vertical_context, args.max_length):
-            logger.error("INT8 ONNX sanity check failed. Shipping FP32 instead.")
+        try:
+            quantize_int8(fp32_path, int8_path)
+            if int8_path.exists():
+                # Sanity check INT8
+                logger.info("Running sanity check on INT8 model...")
+                if sanity_check(model, tokenizer, int8_path, sanity_examples, vertical_context, args.max_length):
+                    fp32_path.unlink()
+                    logger.info("INT8 model saved as %s", int8_path)
+                else:
+                    logger.warning("INT8 sanity check failed. Shipping FP32 instead.")
+                    int8_path.unlink(missing_ok=True)
+                    shutil.copy2(fp32_path, output_dir / "model.onnx")
+                    fp32_path.unlink()
+            else:
+                raise FileNotFoundError("INT8 output not produced")
+        except Exception as e:
+            logger.warning("INT8 quantization failed: %s. Shipping FP32.", e)
+            # Copy FP32 data file too if it exists
+            fp32_data = fp32_path.with_suffix(".onnx.data")
             shutil.copy2(fp32_path, output_dir / "model.onnx")
-        else:
-            # Remove FP32 to save space
-            fp32_path.unlink()
-            logger.info("INT8 model saved as %s", int8_path)
+            if fp32_data.exists():
+                shutil.copy2(fp32_data, output_dir / "model.onnx.data")
+            fp32_path.unlink(missing_ok=True)
+            fp32_data.unlink(missing_ok=True)
     else:
         shutil.copy2(fp32_path, output_dir / "model.onnx")
-        fp32_path.unlink()
+        fp32_data = fp32_path.with_suffix(".onnx.data")
+        if fp32_data.exists():
+            shutil.copy2(fp32_data, output_dir / "model.onnx.data")
+        fp32_path.unlink(missing_ok=True)
+        fp32_data.unlink(missing_ok=True)
 
     # Copy tokenizer
     tokenizer.save_pretrained(str(output_dir / "tokenizer"))
