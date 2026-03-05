@@ -32,6 +32,16 @@ class ClassifyRequest(BaseModel):
         return None
 
 
+class PolicyPackResponse(BaseModel):
+    """Policy pack attached to a classification response."""
+
+    vertical: str
+    decision: str
+    allowed_tools: list[str] = Field(default_factory=list)
+    guardrails: list[str] = Field(default_factory=list)
+    metadata: dict[str, str] = Field(default_factory=dict)
+
+
 class ClassifyResponse(BaseModel):
     """Response body for /v1/classify."""
 
@@ -40,6 +50,9 @@ class ClassifyResponse(BaseModel):
     vertical: str
     message: str = ""  # refusal or clarification text (empty on allow)
     probabilities: dict[str, float] | None = None  # raw class probabilities (debug)
+    routed_vertical: str | None = None  # set when router is active
+    router_scores: dict[str, float] | None = None  # debug: per-vertical confidence
+    policy_pack: PolicyPackResponse | None = None  # optional policy pack
 
 
 # -- OpenAI-compatible types --
@@ -121,3 +134,4 @@ class HealthResponse(BaseModel):
     policy_loaded: bool
     vertical: str
     version: str
+    verticals: list[str] | None = None  # multi-vertical mode

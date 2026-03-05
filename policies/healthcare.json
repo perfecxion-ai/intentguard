@@ -85,5 +85,23 @@
     "log_sampling_rate": 0.1
   },
 
-  "context_template_version": "ctv1"
+  "context_template_version": "ctv1",
+
+  "policy_packs": {
+    "allow": {
+      "allowed_tools": ["symptom_checker", "drug_interaction", "appointment_scheduler", "document_search"],
+      "guardrails": ["medical_disclaimer", "no_diagnosis", "no_prescription", "no_pii_disclosure"],
+      "metadata": {"risk_level": "standard"}
+    },
+    "deny": {
+      "allowed_tools": [],
+      "guardrails": ["block_response", "log_attempt"],
+      "metadata": {"risk_level": "blocked"}
+    },
+    "abstain": {
+      "allowed_tools": ["document_search"],
+      "guardrails": ["require_clarification", "medical_disclaimer", "no_pii_disclosure"],
+      "metadata": {"risk_level": "elevated"}
+    }
+  }
 }

@@ -1,0 +1,24 @@
+{
+  "router_model": "models/router/model.onnx",
+  "router_tokenizer": "models/router/tokenizer",
+  "verticals": {
+    "finance": {
+      "model": "dist/finance/model.onnx",
+      "tokenizer": "dist/finance/tokenizer",
+      "policy": "policies/finance.json",
+      "calibration": "dist/finance/calibration_params.json"
+    },
+    "healthcare": {
+      "model": "dist/healthcare/model.onnx",
+      "tokenizer": "dist/healthcare/tokenizer",
+      "policy": "policies/healthcare.json",
+      "calibration": "dist/healthcare/calibration_params.json"
+    },
+    "legal": {
+      "model": "dist/legal/model.onnx",
+      "tokenizer": "dist/legal/tokenizer",
+      "policy": "policies/legal.json",
+      "calibration": "dist/legal/calibration_params.json"
+    }
+  }
+}

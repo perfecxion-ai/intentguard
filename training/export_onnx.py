@@ -71,15 +71,36 @@ def export_to_onnx(model, tokenizer, output_path: Path, max_length: int = 256):
     logger.info("ONNX model exported to %s", output_path)
 
 
-def quantize_int8(input_path: Path, output_path: Path):
-    """Apply INT8 dynamic quantization using Olive (preferred) or onnxruntime fallback."""
+def quantize_int8(input_path: Path, output_path: Path, method: str | None = None,
+                   max_size_mb: float = 80.0):
+    """Apply INT8 dynamic quantization.
+
+    Tries methods in order: Optimum -> Olive -> ORT fallback.
+    Use method= to force a specific one ('optimum', 'olive', 'ort').
+    """
     original_size = input_path.stat().st_size / (1024 * 1024)
 
-    try:
-        _quantize_with_olive(input_path, output_path)
-    except Exception as e:
-        logger.warning("Olive quantization failed (%s), trying onnxruntime fallback", e)
-        _quantize_with_ort(input_path, output_path)
+    methods = {
+        "optimum": _quantize_with_optimum,
+        "olive": _quantize_with_olive,
+        "ort": _quantize_with_ort,
+    }
+
+    if method:
+        if method not in methods:
+            raise ValueError(f"Unknown quantization method: {method}. Choose from: {list(methods)}")
+        logger.info("Forcing quantization method: %s", method)
+        methods[method](input_path, output_path)
+    else:
+        for name, fn in methods.items():
+            try:
+                logger.info("Trying quantization method: %s", name)
+                fn(input_path, output_path)
+                if output_path.exists():
+                    break
+            except Exception as e:
+                logger.warning("%s quantization failed: %s", name.capitalize(), e)
+                continue
 
     if output_path.exists():
         quantized_size = output_path.stat().st_size / (1024 * 1024)
@@ -88,6 +109,27 @@ def quantize_int8(input_path: Path, output_path: Path):
             original_size, quantized_size,
             (1 - quantized_size / original_size) * 100,
         )
+        if quantized_size > max_size_mb:
+            logger.warning(
+                "Quantized model (%.1fMB) exceeds max size (%.1fMB)",
+                quantized_size, max_size_mb,
+            )
+
+
+def _quantize_with_optimum(input_path: Path, output_path: Path):
+    """Quantize using Optimum ORTQuantizer — best DeBERTa-v3 support."""
+    from optimum.onnxruntime import ORTQuantizer
+    from optimum.onnxruntime.configuration import AutoQuantizationConfig
+
+    quantizer = ORTQuantizer.from_pretrained(input_path.parent, file_name=input_path.name)
+    qconfig = AutoQuantizationConfig.avx512_vnni(is_static=False, per_channel=False)
+    quantizer.quantize(save_dir=output_path.parent, quantization_config=qconfig)
+
+    # ORTQuantizer saves as model_quantized.onnx — rename to target name
+    quantized_file = output_path.parent / "model_quantized.onnx"
+    if quantized_file.exists() and quantized_file != output_path:
+        shutil.move(str(quantized_file), str(output_path))
+    logger.info("Optimum quantization complete: %s", output_path)
 
 
 def _quantize_with_olive(input_path: Path, output_path: Path):
@@ -247,6 +289,10 @@ def main():
     parser.add_argument("--sanity-count", type=int, default=100, help="Number of sanity check examples")
     parser.add_argument("--max-length", type=int, default=256)
     parser.add_argument("--skip-quantize", action="store_true", help="Skip INT8 quantization")
+    parser.add_argument("--quantize-method", choices=["optimum", "olive", "ort"],
+                        default=None, help="Force a specific quantization method")
+    parser.add_argument("--max-size-mb", type=float, default=80.0,
+                        help="Warn if quantized model exceeds this size (MB)")
     args = parser.parse_args()
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
@@ -297,7 +343,8 @@ def main():
         int8_path = output_dir / "model.onnx"
         logger.info("Quantizing to INT8...")
         try:
-            quantize_int8(fp32_path, int8_path)
+            quantize_int8(fp32_path, int8_path, method=args.quantize_method,
+                          max_size_mb=args.max_size_mb)
             if int8_path.exists():
                 # Sanity check INT8
                 logger.info("Running sanity check on INT8 model...")

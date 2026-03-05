@@ -102,5 +102,23 @@
     "log_sampling_rate": 0.1
   },
 
-  "context_template_version": "ctv1"
+  "context_template_version": "ctv1",
+
+  "policy_packs": {
+    "allow": {
+      "allowed_tools": ["calculator", "market_data", "account_lookup", "document_search"],
+      "guardrails": ["no_trade_execution", "no_pii_disclosure", "disclaimer_required"],
+      "metadata": {"risk_level": "standard"}
+    },
+    "deny": {
+      "allowed_tools": [],
+      "guardrails": ["block_response", "log_attempt"],
+      "metadata": {"risk_level": "blocked"}
+    },
+    "abstain": {
+      "allowed_tools": ["document_search"],
+      "guardrails": ["require_clarification", "no_pii_disclosure"],
+      "metadata": {"risk_level": "elevated"}
+    }
+  }
 }

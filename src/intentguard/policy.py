@@ -58,6 +58,14 @@ class PrivacyConfig(BaseModel):
     log_sampling_rate: float = 0.1
 
 
+class PolicyPack(BaseModel):
+    """Tools and guardrails associated with a classification decision."""
+
+    allowed_tools: list[str] = Field(default_factory=list)
+    guardrails: list[str] = Field(default_factory=list)
+    metadata: dict[str, str] = Field(default_factory=dict)
+
+
 class PolicySpec(BaseModel):
     vertical: str
     version: str
@@ -68,6 +76,7 @@ class PolicySpec(BaseModel):
     decision: DecisionConfig = Field(default_factory=DecisionConfig)
     privacy: PrivacyConfig = Field(default_factory=PrivacyConfig)
     context_template_version: str = "ctv1"
+    policy_packs: dict[str, PolicyPack] = Field(default_factory=dict)
 
 
 class Policy:
@@ -134,6 +143,10 @@ class Policy:
             followup = resp.abstain_followup_template.replace("{core_topics_sample}", sample)
             msg = f"{msg} {followup}"
         return msg
+
+    def get_policy_pack(self, decision: str) -> PolicyPack | None:
+        """Look up the policy pack for a given decision."""
+        return self.spec.policy_packs.get(decision)
 
     def _build_vertical_context(self) -> str:
         """Build the context segment appended to model input.

@@ -58,6 +58,14 @@ class Settings:
         default_factory=lambda: os.getenv("DEBUG", "false").lower() == "true"
     )
 
+    # Multi-vertical router
+    router_enabled: bool = field(
+        default_factory=lambda: os.getenv("ROUTER_ENABLED", "false").lower() == "true"
+    )
+    router_config_path: Path = field(
+        default_factory=lambda: Path(os.getenv("ROUTER_CONFIG_PATH", "router_config.json"))
+    )
+
 
 def load_settings() -> Settings:
     return Settings()

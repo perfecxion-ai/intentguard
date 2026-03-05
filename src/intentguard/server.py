@@ -17,6 +17,7 @@ from intentguard import metrics
 from intentguard.classifier import BaseClassifier, ONNXClassifier, StubClassifier
 from intentguard.config import Settings, load_settings
 from intentguard.policy import Policy
+from intentguard.router import VerticalRouter
 from intentguard.schema import (
     ChatCompletionRequest,
     ChatCompletionResponse,
@@ -30,6 +31,7 @@ from intentguard.schema import (
     Message,
     ModelInfo,
     ModelList,
+    PolicyPackResponse,
 )
 
 logger = logging.getLogger(__name__)
@@ -37,6 +39,7 @@ logger = logging.getLogger(__name__)
 _classifier: BaseClassifier | None = None
 _policy: Policy | None = None
 _settings: Settings | None = None
+_router: VerticalRouter | None = None
 
 
 class ClassifyMode(StrEnum):
@@ -61,26 +64,48 @@ def _load_classifier(settings: Settings, policy: Policy) -> BaseClassifier:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    global _classifier, _policy, _settings
+    global _classifier, _policy, _settings, _router
 
     _settings = load_settings()
-    logger.info("Loading policy from %s", _settings.policy_path)
 
-    try:
-        _policy = Policy.from_file(_settings.policy_path)
-    except (FileNotFoundError, ValueError) as e:
-        logger.error("Failed to load policy: %s", e)
-        raise SystemExit(1) from e
+    if _settings.router_enabled:
+        logger.info("Multi-vertical router mode enabled")
+        config_path = _settings.router_config_path
+        if not config_path.exists():
+            logger.error("Router config not found: %s", config_path)
+            raise SystemExit(1)
+        try:
+            _router = VerticalRouter.from_config(config_path)
+        except Exception as e:
+            logger.error("Failed to load router: %s", e)
+            raise SystemExit(1) from e
 
-    logger.info(
-        "Policy loaded: %s v%s (%s)",
-        _policy.vertical, _policy.version, _policy.display_name,
-    )
+        # Use the first vertical's policy as the default
+        first_vertical = next(iter(_router.classifiers))
+        _policy = _router.classifiers[first_vertical].policy
+        _classifier = _router.classifiers[first_vertical]
+        metrics.set_model_loaded(True)
+        logger.info(
+            "Router ready: %d verticals on port %s",
+            len(_router.vertical_labels), _settings.port,
+        )
+    else:
+        logger.info("Loading policy from %s", _settings.policy_path)
+        try:
+            _policy = Policy.from_file(_settings.policy_path)
+        except (FileNotFoundError, ValueError) as e:
+            logger.error("Failed to load policy: %s", e)
+            raise SystemExit(1) from e
 
-    _classifier = _load_classifier(_settings, _policy)
-    model_loaded = not isinstance(_classifier, StubClassifier)
-    metrics.set_model_loaded(model_loaded)
-    logger.info("IntentGuard ready on port %s", _settings.port)
+        logger.info(
+            "Policy loaded: %s v%s (%s)",
+            _policy.vertical, _policy.version, _policy.display_name,
+        )
+
+        _classifier = _load_classifier(_settings, _policy)
+        model_loaded = not isinstance(_classifier, StubClassifier)
+        metrics.set_model_loaded(model_loaded)
+        logger.info("IntentGuard ready on port %s", _settings.port)
 
     yield
     logger.info("Shutting down")
@@ -107,11 +132,33 @@ async def classify(
         raise HTTPException(status_code=400, detail="No user message found in request")
 
     start = time.perf_counter()
-    result = _classifier.classify(text)
+
+    if _router:
+        result, routed_vertical, router_scores = _router.classify(text)
+        result.routed_vertical = routed_vertical
+        if _settings.debug:
+            result.router_scores = router_scores
+
+        # Attach policy pack if available
+        classifier = _router.classifiers.get(routed_vertical)
+        if classifier:
+            pack = classifier.policy.get_policy_pack(result.decision.value)
+            if pack:
+                result.policy_pack = PolicyPackResponse(
+                    vertical=routed_vertical,
+                    decision=result.decision.value,
+                    allowed_tools=pack.allowed_tools,
+                    guardrails=pack.guardrails,
+                    metadata=pack.metadata,
+                )
+    else:
+        result = _classifier.classify(text)
+
     elapsed_ms = (time.perf_counter() - start) * 1000
 
     if not _settings.debug:
         result.probabilities = None
+        result.router_scores = None
 
     # Record metrics
     metrics.record_classification(result.decision.value, result.vertical, elapsed_ms / 1000)
@@ -128,6 +175,9 @@ async def classify(
             vertical=result.vertical,
             message="",
             probabilities=result.probabilities,
+            routed_vertical=result.routed_vertical,
+            router_scores=result.router_scores,
+            policy_pack=result.policy_pack,
         )
         response.headers["X-Classification-Decision"] = "allow"
 
@@ -195,12 +245,14 @@ async def feedback(req: FeedbackRequest):
 @app.get("/health", response_model=HealthResponse)
 async def health():
     model_loaded = _classifier is not None and not isinstance(_classifier, StubClassifier)
+    verticals = list(_router.vertical_labels) if _router else None
     return HealthResponse(
         status="ok" if _classifier else "error",
-        model_loaded=model_loaded,
+        model_loaded=model_loaded if not _router else True,
         policy_loaded=_policy is not None,
         vertical=_policy.vertical if _policy else "",
         version=_policy.version if _policy else "",
+        verticals=verticals,
     )
 
 
